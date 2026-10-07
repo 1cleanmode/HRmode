@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRmode — Team Directory</title>
+    <meta name="description" content="A friendly, modern employee directory. Built in your browser.">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0a0e1a" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HRmode">
+    <script>
+        // Only link the manifest when served over http(s) — file:// blocks CORS
+        if (location.protocol === 'http:' || location.protocol === 'https:') {
+            var m = document.createElement('link');
+            m.rel = 'manifest';
+            m.href = 'manifest.webmanifest';
+            document.head.appendChild(m);
+        }
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='-apple-system,system-ui,sans-serif' font-size='36' font-weight='800' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='-apple-system,system-ui,sans-serif' font-size='36' font-weight='800' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ==================== PWA OFFLINE BAR ==================== -->
+    <div class="pwa-offline-bar" id="pwaOfflineBar" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"/>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+            <path d="M10.71 5.05A16 16 0 0 1 22.58 9"/>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <line x1="12" y1="20" x2="12.01" y2="20"/>
+        </svg>
+        <span>You're offline — HRmode works locally, all changes are saved on this device.</span>
+    </div>
+
+    <!-- ==================== NAV ==================== -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">
+                <div class="brand-lockup">
+                    <span class="nav-logo">HRmode</span>
+                    <span class="demo-pill" id="demoPill" style="display:none;">DEMO</span>
+                </div>
+                <span class="nav-by">Eden Built</span>
+            </a>
+            <div class="nav-right">
+                <button class="cmdk-trigger" id="cmdkTrigger" title="Open command palette (⌘K)" aria-label="Open command palette">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <span class="cmdk-trigger-label">Search or jump to…</span>
+                    <span class="cmdk-kbd">⌘K</span>
+                </button>
+                <button class="activity-trigger" id="activityTrigger" title="View activity log" aria-label="View activity log">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </button>
+                <button class="trash-trigger" id="trashTrigger" title="Open Trash" aria-label="Open Trash">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        <line x1="10" y1="11" x2="10" y2="17"/>
+                        <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                    <span class="trash-trigger-badge" id="trashTriggerBadge" style="display:none;">0</span>
+                </button>
+                <button class="reports-trigger" id="reportsTrigger" title="Open Reports & Dashboard" aria-label="Open Reports & Dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="20" x2="12" y2="10"/>
+                        <line x1="18" y1="20" x2="18" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="16"/>
+                    </svg>
+                </button>
+                <button class="install-app-btn" id="installAppBtn" title="Install HRmode" aria-label="Install HRmode" style="display:none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span class="install-app-btn-label">Install</span>
+                </button>
+                <span class="nav-status-pill" id="navStatusPill" title="Who's working right now">
+                    <span class="nav-status-dot" id="navStatusDot"></span>
+                    <span class="nav-status-text" id="navStatusText">No one online</span>
+                </span>
+                <span class="nav-tagline">Team Directory</span>
+                <button class="protect-toggle" id="protectToggle" title="Protect Mode — lock delete actions" aria-label="Toggle Protect Mode">
+                    <svg class="protect-icon-unlocked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+                    </svg>
+                    <svg class="protect-icon-locked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span class="protect-label">Protect</span>
+                </button>
+                <button class="theme-switch" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+                    <span class="theme-switch-thumb">
+                        <svg class="ts-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="4"/>
+                            <line x1="12" y1="2" x2="12" y2="4"/>
+                            <line x1="12" y1="20" x2="12" y2="22"/>
+                            <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/>
+                            <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/>
+                            <line x1="2" y1="12" x2="4" y2="12"/>
+                            <line x1="20" y1="12" x2="22" y2="12"/>
+                            <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/>
+                            <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/>
+                        </svg>
+                        <svg class="ts-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="protect-banner" id="protectBanner" style="display:none;">
+        <div class="protect-banner-inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span><strong>Protect Mode is on</strong> — delete actions are locked. Turn off to allow deletions.</span>
+        </div>
+    </div>
+
+    <header class="page-header">
+        <div class="page-header-inner">
+            <h1 class="page-title">Your Team</h1>
+            <p class="page-sub">Everyone in one place. Add new hires, update details, and find anyone in seconds.</p>
+
+            <div class="header-actions">
+                <div class="search-wrap">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search by name, role, or department…" autocomplete="off">
+                </div>
+
+                <div class="sort-wrap">
+                    <label for="sortSelect" class="sort-label">Sort</label>
+                    <select id="sortSelect">
+                        <option value="name">Name (A→Z)</option>
+                        <option value="name-desc">Name (Z→A)</option>
+                        <option value="department">Department</option>
+                        <option value="date-new">Recently added</option>
+                        <option value="date-old">Oldest first</option>
+                        <option value="start-new">Newest start date</option>
+                        <option value="start-old">Oldest start date</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-ghost" id="selectToggleBtn" title="Select multiple">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 11 12 14 22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    Select
+                </button>
+
+                <button class="btn btn-primary" id="addBtn">
+                    <span class="btn-icon">+</span> Add Employee
+                </button>
+            </div>
+
+            <div class="filter-chips-wrap" id="filterChipsWrap" style="display:none;">
+                <div class="filter-chips" id="filterChips"></div>
+                <button class="clear-filters-btn" id="clearFiltersBtn" style="display:none;" type="button">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-num" id="statTotal">0</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-num" id="statVisible">0</span>
+                    <span class="stat-label">Showing</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-num" id="statDepts">0</span>
+                    <span class="stat-label">Departments</span>
+                </div>
+            </div>
+
+            <div class="status-strip" id="statusStrip">
+                <button class="status-pill" data-status="off-shift" type="button">
+                    <span class="status-pill-dot" data-color="off-shift"></span>
+                    <span class="status-pill-label">Off-Shift</span>
+                    <span class="status-pill-count" id="countOff">0</span>
+                </button>
+                <button class="status-pill" data-status="break" type="button">
+                    <span class="status-pill-dot" data-color="break"></span>
+                    <span class="status-pill-label">Break/Lunch</span>
+                    <span class="status-pill-count" id="countBreak">0</span>
+                </button>
+                <button class="status-pill" data-status="production" type="button">
+                    <span class="status-pill-dot" data-color="production"></span>
+                    <span class="status-pill-label">Production</span>
+                    <span class="status-pill-count" id="countProd">0</span>
+                </button>
+                <button class="status-pill" data-status="overtime" type="button">
+                    <span class="status-pill-dot" data-color="overtime"></span>
+                    <span class="status-pill-label">Over-Time</span>
+                    <span class="status-pill-count" id="countOT">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="recent-strip" id="recentStrip" style="display:none;">
+        <div class="recent-strip-inner">
+            <div class="recent-label">
+                <span class="recent-dot"></span>
+                Recently added
+            </div>
+            <div class="recent-list" id="recentList"></div>
+        </div>
+    </section>
+
+    <!-- ==================== ANNOUNCEMENTS STRIP ==================== -->
+    <button class="announce-strip" id="announceStrip" type="button">
+        <span class="announce-strip-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        </span>
+        <span class="announce-strip-label">Announcements</span>
+        <span class="announce-strip-pinned" id="announceStripPinned" style="display:none;"></span>
+        <span class="announce-strip-spacer"></span>
+        <span class="announce-strip-count" id="announceStripCount">0</span>
+        <span class="announce-strip-cta">
+            <span class="announce-strip-cta-text">View all</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </span>
+    </button>
+
+    <div class="bulk-bar" id="bulkBar" style="display:none;">
+        <div class="bulk-bar-inner">
+            <div class="bulk-info">
+                <strong id="bulkCount">0</strong> selected
+            </div>
+            <div class="bulk-actions">
+                <button class="btn btn-ghost bulk-cancel" id="bulkCancelBtn">Cancel</button>
+                <button class="btn btn-ghost" id="bulkChangeDeptBtn">Change Dept</button>
+                <button class="btn bulk-delete" id="bulkDeleteBtn">Delete Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <main class="main">
+        <div class="grid" id="employeeGrid"></div>
+
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="empty-icon">👥</div>
+            <h2>No team members yet</h2>
+            <p>Add your first employee to get started.</p>
+            <button class="btn btn-primary" id="emptyAddBtn">
+                <span class="btn-icon">+</span> Add Employee
+            </button>
+        </div>
+
+        <div class="no-results" id="noResults" style="display:none;">
+            <div class="empty-icon">🔍</div>
+            <h2>No matches</h2>
+            <p id="noResultsText">Try a different search term.</p>
+            <button class="btn btn-ghost" id="noResultsClearBtn" type="button">Clear filters</button>
+        </div>
+
+        <!-- ==================== ROW 1: WIDGET STRIP ==================== -->
+        <section class="widget-strip-wrap">
+            <div class="widget-strip" id="widgetStrip">
+                <div class="widget-strip-track" id="widgetStripTrack">
+
+                    <section class="mock-section widget-tile">
+                        <div class="mock-divider">
+                            <span class="mock-divider-line"></span>
+                            <span class="mock-eyebrow">Today's Timesheet</span>
+                            <span class="mock-divider-line"></span>
+                        </div>
+                        <div class="timesheet-card" id="timesheetCard" role="button" tabindex="0" title="Click to see the full list">
+                            <div class="timesheet-header">
+                                <div>
+                                    <h3 class="timesheet-title">Hours logged today</h3>
+                                    <p class="timesheet-sub" id="timesheetSub">Live totals — updates as people enter and leave Production.</p>
+                                </div>
+                                <div class="timesheet-header-right">
+                                    <span class="timesheet-live" id="timesheetLive">
+                                        <span class="live-dot"></span> Live
+                                    </span>
+                                    <span class="timesheet-viewall" id="timesheetViewAll">View all →</span>
+                                </div>
+                            </div>
+                            <div class="timesheet-scroll" id="timesheetScroll">
+                                <div class="timesheet-list" id="timesheetList"></div>
+                            </div>
+                            <div class="timesheet-fade" aria-hidden="true"></div>
+                        </div>
+                    </section>
+
+                    <section class="mock-section widget-tile">
+                        <div class="mock-divider">
+                            <span class="mock-divider-line"></span>
+                            <span class="mock-eyebrow">Pay &amp; Compensation</span>
+                            <span class="mock-divider-line"></span>
+                        </div>
+                        <div class="pay-card">
+                            <div class="pay-header">
+                                <div>
+                                    <h3 class="pay-title">Gross → Net calculator</h3>
+                                    <p class="pay-sub">Enter rate and deductions per employee to preview their pay.</p>
+                                </div>
+                                <select class="pay-employee-select" id="payEmployeeSelect">
+                                    <option value="">— Choose employee —</option>
+                                </select>
+                            </div>
+
+                            <div class="pay-empty" id="payEmpty">
+                                <strong>Select an employee</strong> to open their pay settings and see the calculator.
+                            </div>
+
+                            <div class="pay-body" id="payBody" style="display:none;">
+                                <div class="pay-settings">
+                                    <div class="pay-field">
+                                        <label>Rate Type</label>
+                                        <select id="payRateType">
+                                            <option value="hourly">Hourly</option>
+                                            <option value="monthly">Monthly</option>
+                                        </select>
+                                    </div>
+                                    <div class="pay-field">
+                                        <label id="payRateLabel">Hourly Rate</label>
+                                        <input type="number" id="payRate" placeholder="0.00" step="0.01" min="0">
+                                    </div>
+                                    <div class="pay-field">
+                                        <label>Tax %</label>
+                                        <input type="number" id="payTax" placeholder="16" step="0.1" min="0" max="100">
+                                    </div>
+                                    <div class="pay-field">
+                                        <label>Pension %</label>
+                                        <input type="number" id="payPension" placeholder="5" step="0.1" min="0" max="100">
+                                    </div>
+                                    <div class="pay-field">
+                                        <label>Other deductions</label>
+                                        <input type="number" id="payOther" placeholder="0.00" step="0.01" min="0">
+                                    </div>
+                                    <button class="btn btn-primary pay-save-btn" id="paySaveBtn" type="button">Save Pay Settings</button>
+                                </div>
+
+                                <div class="pay-calc">
+                                    <div class="pay-calc-row">
+                                        <span class="pay-calc-label">Hours (this period)</span>
+                                        <span class="pay-calc-value" id="calcHours">0h</span>
+                                    </div>
+                                    <div class="pay-calc-row">
+                                        <span class="pay-calc-label">Gross</span>
+                                        <span class="pay-calc-value" id="calcGross">$0.00</span>
+                                    </div>
+                                    <div class="pay-calc-row pay-deduction">
+                                        <span class="pay-calc-label">Tax</span>
+                                        <span class="pay-calc-value" id="calcTax">−$0.00</span>
+                                    </div>
+                                    <div class="pay-calc-row pay-deduction">
+                                        <span class="pay-calc-label">Pension</span>
+                                        <span class="pay-calc-value" id="calcPension">−$0.00</span>
+                                    </div>
+                                    <div class="pay-calc-row pay-deduction">
+                                        <span class="pay-calc-label">Other</span>
+                                        <span class="pay-calc-value" id="calcOther">−$0.00</span>
+                                    </div>
+                                    <div class="pay-calc-divider"></div>
+                                    <div class="pay-calc-row pay-net">
+                                        <span class="pay-calc-label">Net pay</span>
+                                        <span class="pay-calc-value" id="calcNet">$0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="mock-section widget-tile">
+                        <div class="mock-divider">
+                            <span class="mock-divider-line"></span>
+                            <span class="mock-eyebrow">Time Off</span>
+                            <span class="mock-divider-line"></span>
+                        </div>
+                        <div class="timeoff-card" id="timeOffCard" role="button" tabindex="0" title="Click to see all time off">
+                            <div class="timeoff-header">
+                                <div>
+                                    <h3 class="timeoff-title">Leave balances</h3>
+                                    <p class="timeoff-sub" id="timeOffSub">Snapshot of paid time off used and remaining.</p>
+                                </div>
+                                <div class="timeoff-header-right">
+                                    <button class="btn btn-primary btn-sm" id="timeOffRequestBtn" type="button" title="Request Time Off">+ Request</button>
+                                    <span class="timesheet-viewall" id="timeOffViewAll">View all →</span>
+                                </div>
+                            </div>
+                            <div class="timeoff-scroll" id="timeOffScroll">
+                                <div class="timeoff-list" id="timeOffList"></div>
+                            </div>
+                            <div class="timesheet-fade" aria-hidden="true"></div>
+                        </div>
+                    </section>
+
+                    <section class="mock-section widget-tile">
+                        <div class="mock-divider">
+                            <span class="mock-divider-line"></span>
+                            <span class="mock-eyebrow">Org Chart</span>
+                            <span class="mock-divider-line"></span>
+                        </div>
+                        <div class="orgchart-card orgchart-card-preview" id="orgChartCard" role="button" tabindex="0" title="Click to see the full org chart">
+                            <div class="orgchart-header">
+                                <div>
+                                    <h3 class="orgchart-title">Reporting structure</h3>
+                                    <p class="orgchart-sub" id="orgChartSub">Who reports to whom.</p>
+                                </div>
+                                <span class="timesheet-viewall">View all →</span>
+                            </div>
+                            <div class="orgchart-preview-scroll" id="orgChartPreviewScroll">
+                                <div class="orgchart-preview" id="orgChartPreview"></div>
+                            </div>
+                            <div class="timesheet-fade" aria-hidden="true"></div>
+                        </div>
+                    </section>
+
+                    <section class="mock-section widget-tile">
+                        <div class="mock-divider">
+                            <span class="mock-divider-line"></span>
+                            <span class="mock-eyebrow">Peer Recognition</span>
+                            <span class="mock-divider-line"></span>
+                        </div>
+                        <div class="kudos-card" id="kudosCard" role="button" tabindex="0" title="Click to see all kudos">
+                            <div class="kudos-header">
+                                <div>
+                                    <h3 class="kudos-title">Kudos</h3>
+                                    <p class="kudos-sub" id="kudosSub">Nice things people said about each other.</p>
+                                </div>
+                                <div class="kudos-header-right">
+                                    <button class="btn btn-primary btn-sm" id="kudosGiveBtn" type="button" title="Give Kudos">+ Give</button>
+                                    <span class="timesheet-viewall" id="kudosViewAll">View all →</span>
+                                </div>
+                            </div>
+                            <div class="kudos-scroll" id="kudosScroll">
+                                <div class="kudos-list" id="kudosList"></div>
+                            </div>
+                            <div class="timesheet-fade" aria-hidden="true"></div>
+                        </div>
+                    </section>
+
+                    <section class="mock-section widget-tile">
+                        <div class="mock-divider">
+                            <span class="mock-divider-line"></span>
+                            <span class="mock-eyebrow">Goals &amp; OKRs</span>
+                            <span class="mock-divider-line"></span>
+                        </div>
+                        <div class="goals-card" id="goalsCard" role="button" tabindex="0" title="Click to see all goals">
+                            <div class="goals-header">
+                                <div>
+                                    <h3 class="goals-title">Team objectives</h3>
+                                    <p class="goals-sub" id="goalsSub">What everyone is working toward.</p>
+                                </div>
+                                <div class="goals-header-right">
+                                    <button class="btn btn-primary btn-sm" id="goalsAddBtn" type="button" title="New Goal">+ Goal</button>
+                                    <span class="timesheet-viewall" id="goalsViewAll">View all →</span>
+                                </div>
+                            </div>
+                            <div class="goals-scroll" id="goalsScroll">
+                                <div class="goals-list" id="goalsList"></div>
+                            </div>
+                            <div class="timesheet-fade" aria-hidden="true"></div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+            <button class="widget-strip-arrow left" id="widgetStripLeft" aria-label="Scroll left" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+            </button>
+            <button class="widget-strip-arrow right" id="widgetStripRight" aria-label="Scroll right" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+        </section>
+
+        <div class="mock-two-up">
+            <section class="mock-section">
+                <div class="mock-divider">
+                    <span class="mock-divider-line"></span>
+                    <span class="mock-eyebrow">Pay History</span>
+                    <span class="mock-divider-line"></span>
+                </div>
+                <div class="payhistory-card">
+                    <div class="payhistory-header">
+                        <div>
+                            <h3 class="payhistory-title">Closed pay periods</h3>
+                            <p class="payhistory-sub">Snapshots of finished periods. Immutable once closed.</p>
+                        </div>
+                        <div class="payhistory-header-actions">
+                            <button class="btn btn-ghost btn-sm" id="exportAllSnapshotsBtn" type="button" title="Download all closed periods as JSON">
+                                ⬇ Export all
+                            </button>
+                            <button class="btn btn-primary btn-sm" id="closePeriodBtn" type="button">
+                                📆 Close Current Period
+                            </button>
+                        </div>
+                    </div>
+                    <div class="payhistory-list" id="payHistoryList"></div>
+                </div>
+            </section>
+
+            <section class="mock-section">
+                <div class="mock-divider">
+                    <span class="mock-divider-line"></span>
+                    <span class="mock-eyebrow">Onboarding</span>
+                    <span class="mock-divider-line"></span>
+                </div>
+                <div class="onboarding-card" id="onboardingCard" role="button" tabindex="0" title="Click to see all in progress">
+                    <div class="onboarding-header">
+                        <h3 class="onboarding-title">In progress</h3>
+                        <span class="onboarding-count" id="onboardingCount">0</span>
+                    </div>
+                    <div class="onboarding-list" id="onboardingList"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="mock-two-up">
+            <section class="mock-section">
+                <div class="mock-divider">
+                    <span class="mock-divider-line"></span>
+                    <span class="mock-eyebrow">Probation</span>
+                    <span class="mock-divider-line"></span>
+                </div>
+                <div class="probation-card">
+                    <div class="probation-header">
+                        <h3 class="probation-title">On probation</h3>
+                        <span class="probation-count" id="probationCount">0</span>
+                    </div>
+                    <div class="probation-list" id="probationList"></div>
+                </div>
+            </section>
+
+            <section class="mock-section">
+                <div class="mock-divider">
+                    <span class="mock-divider-line"></span>
+                    <span class="mock-eyebrow">Celebrations</span>
+                    <span class="mock-divider-line"></span>
+                </div>
+                <div class="celebrate-card" id="celebrateCard" role="button" tabindex="0" title="Click to see all upcoming">
+                    <div class="celebrate-header">
+                        <h3 class="celebrate-title">Upcoming</h3>
+                        <span class="celebrate-count" id="celebrateCount">0</span>
+                    </div>
+                    <div class="celebrate-list" id="celebrateList"></div>
+                    <div class="celebrate-viewall">View all →</div>
+                </div>
+            </section>
+        </div>
+
+        <section class="mock-section">
+            <div class="mock-divider">
+                <span class="mock-divider-line"></span>
+                <span class="mock-eyebrow">Holidays</span>
+                <span class="mock-divider-line"></span>
+            </div>
+            <div class="holiday-card" id="holidayCard" role="button" tabindex="0" title="Click to see all holidays">
+                <div class="holiday-header">
+                    <div>
+                        <h3 class="holiday-title">Upcoming holidays</h3>
+                        <p class="holiday-sub" id="holidaySub">International, national, and company days off.</p>
+                    </div>
+                    <div class="holiday-header-right">
+                        <button class="btn btn-primary btn-sm" id="holidayAddBtn" type="button" title="Add Holiday">+ Add</button>
+                        <span class="holiday-count" id="holidayCount">0 upcoming</span>
+                    </div>
+                </div>
+                <div class="holiday-list" id="holidayList"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <span class="footer-brand">HRmode</span>
+            <span class="footer-note">Built with 💻 by Eden · All data stays in your browser</span>
+        </div>
+    </footer>
+
+    <div class="detail-overlay" id="detailOverlay"></div>
+    <aside class="detail-panel" id="detailPanel">
+        <div class="detail-header">
+            <button class="detail-close" id="detailClose" aria-label="Close">✕</button>
+        </div>
+        <div class="detail-body" id="detailBody"></div>
+    </aside>
+
+    <div class="modal-overlay" id="timesheetModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Today's Timesheet</h2>
+                    <p class="modal-header-sub" id="timesheetModalSub">Everyone · sorted by hours today</p>
+                </div>
+                <button class="modal-close" id="timesheetModalClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="timesheet-list timesheet-list-modal" id="timesheetModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="celebrateModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Upcoming Celebrations</h2>
+                    <p class="modal-header-sub" id="celebrateModalSub">Birthdays &amp; work anniversaries</p>
+                </div>
+                <button class="modal-close" id="celebrateModalClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="celebrate-list celebrate-list-modal" id="celebrateModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="onboardingModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2 id="onboardingModalTitle">Onboarding Checklist</h2>
+                    <p class="modal-header-sub" id="onboardingModalSub">—</p>
+                </div>
+                <button class="modal-close" id="onboardingModalClose" aria-label="Close">✕</button>
+            </div>
+            <div class="onboarding-templates-bar">
+                <div class="onboarding-templates-label">Templates</div>
+                <div class="onboarding-templates-chips" id="onboardingTemplatesChips"></div>
+                <button class="onboarding-new-template-btn" id="onboardingNewTemplateBtn" type="button" title="Create a new template">
+                    + New
+                </button>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="onboarding-modal-body" id="onboardingModalBody"></div>
+            </div>
+            <div class="modal-footer" style="padding: 16px 26px; margin: 0; border-top: 1px solid var(--border);">
+                <button type="button" class="btn btn-ghost btn-sm" id="onboardingResetAllBtn">Reset all completed</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="orgModalOverlay">
+        <div class="modal modal-xl">
+            <div class="modal-header">
+                <div>
+                    <h2>Org Chart</h2>
+                    <p class="modal-header-sub" id="orgModalSub">Reporting structure</p>
+                </div>
+                <div class="orgmodal-header-actions">
+                    <div class="org-zoom">
+                        <button class="org-zoom-btn" id="orgZoomOut" title="Zoom out" aria-label="Zoom out" type="button">−</button>
+                        <button class="org-zoom-btn org-zoom-level" id="orgZoomLevel" title="Reset zoom" aria-label="Reset zoom" type="button">100%</button>
+                        <button class="org-zoom-btn" id="orgZoomIn" title="Zoom in" aria-label="Zoom in" type="button">+</button>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" id="orgModalExpandAllBtn" type="button">Expand all</button>
+                    <button class="btn btn-ghost btn-sm" id="orgModalCollapseAllBtn" type="button">Collapse all</button>
+                    <button class="modal-close" id="orgModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="orgchart-scroll orgchart-modal-scroll" id="orgModalScroll">
+                    <div class="orgchart orgchart-zoomable" id="orgModalChart" style="transform: scale(1);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="timeOffModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Time Off</h2>
+                    <p class="modal-header-sub" id="timeOffModalSub">Balances &amp; requests</p>
+                </div>
+                <div class="timeoff-modal-actions">
+                    <button class="btn btn-primary btn-sm" id="timeOffModalRequestBtn" type="button">+ Request</button>
+                    <button class="modal-close" id="timeOffModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="timeoff-tabs" id="timeOffTabs">
+                    <button class="timeoff-tab active" data-tab="balances" type="button">Balances</button>
+                    <button class="timeoff-tab" data-tab="pending" type="button">Pending <span class="timeoff-tab-badge" id="timeOffPendingBadge">0</span></button>
+                    <button class="timeoff-tab" data-tab="history" type="button">History</button>
+                </div>
+                <div class="timeoff-tab-content" id="timeOffTabContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="timeOffRequestOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Request Time Off</h2>
+                <button class="modal-close" id="timeOffRequestClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="toEmployeeSelect">Employee <span class="req">*</span></label>
+                        <select id="toEmployeeSelect">
+                            <option value="">— Choose employee —</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="toType">Type <span class="req">*</span></label>
+                        <select id="toType">
+                            <option value="vacation">Vacation</option>
+                            <option value="sick">Sick</option>
+                            <option value="personal">Personal</option>
+                            <option value="unpaid">Unpaid</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="toStartDate">Start date <span class="req">*</span></label>
+                        <input type="date" id="toStartDate">
+                    </div>
+                    <div class="form-field">
+                        <label for="toEndDate">End date <span class="req">*</span></label>
+                        <input type="date" id="toEndDate">
+                    </div>
+                    <div class="form-field full">
+                        <label for="toReason">Reason <span class="opt">(optional)</span></label>
+                        <textarea id="toReason" rows="3" placeholder="e.g. Family trip"></textarea>
+                    </div>
+                </div>
+                <div class="timeoff-preview" id="timeOffPreview"></div>
+                <div class="form-error" id="timeOffFormError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="timeOffCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="timeOffSubmitBtn">Submit Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="holidayModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>All Holidays</h2>
+                    <p class="modal-header-sub" id="holidayModalSub">International, national, and company days off.</p>
+                </div>
+                <div class="holiday-modal-actions">
+                    <button class="btn btn-primary btn-sm" id="holidayModalAddBtn" type="button">+ Add Holiday</button>
+                    <button class="modal-close" id="holidayModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="holiday-modal-list" id="holidayModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="holidayEditOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="holidayEditTitle">Add Holiday</h2>
+                <button class="modal-close" id="holidayEditClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="holidayEditId">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="holidayFieldName">Name <span class="req">*</span></label>
+                        <input type="text" id="holidayFieldName" placeholder="e.g. Christmas Day">
+                    </div>
+                    <div class="form-field">
+                        <label for="holidayFieldDate">Date <span class="req">*</span></label>
+                        <input type="date" id="holidayFieldDate">
+                    </div>
+                    <div class="form-field">
+                        <label for="holidayFieldCountry">Country / Region</label>
+                        <input type="text" id="holidayFieldCountry" placeholder="e.g. Kenya, Global, Company">
+                    </div>
+                    <div class="form-field full">
+                        <label for="holidayFieldType">Type</label>
+                        <select id="holidayFieldType">
+                            <option value="national">National</option>
+                            <option value="international">International</option>
+                            <option value="company">Company</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label class="holiday-checkbox-label">
+                            <input type="checkbox" id="holidayFieldRepeat" checked>
+                            <span>Repeats every year</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-error" id="holidayEditError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="holidayEditCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="holidayEditSaveBtn">Save Holiday</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="holidayDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete holiday</h2>
+                <button class="modal-close" id="holidayDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="holidayDeleteMessage">This will remove the holiday from your list.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="holidayDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="holidayDeleteApplyBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="closePeriodOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Close Pay Period</h2>
+                <button class="modal-close" id="closePeriodClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="closeperiod-info">
+                    <p class="closeperiod-label">Closing:</p>
+                    <p class="closeperiod-period" id="closePeriodLabel">—</p>
+                    <p class="closeperiod-note">
+                        This will save a permanent snapshot of every employee's hours and pay for this period.
+                        <strong>Snapshots cannot be edited or deleted.</strong>
+                    </p>
+                </div>
+                <div class="form-field">
+                    <label for="closePeriodConfirm">Type <span class="confirm-phrase">CLOSE</span> to confirm</label>
+                    <input type="text" id="closePeriodConfirm" autocomplete="off" spellcheck="false" placeholder="CLOSE">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="closePeriodCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="closePeriodApplyBtn" disabled>Close Period</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="snapshotOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2 id="snapshotTitle">Period Snapshot</h2>
+                    <p class="modal-header-sub" id="snapshotSub">—</p>
+                </div>
+                <div class="snapshot-modal-actions">
+                    <button class="btn btn-ghost btn-sm" id="snapshotExportBtn" type="button" title="Download this snapshot as CSV">
+                        ⬇ Export CSV
+                    </button>
+                    <button class="modal-close" id="snapshotClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="snapshot-list" id="snapshotList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Employee</h2>
+                <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+            </div>
+
+            <form class="modal-body" id="employeeForm" novalidate>
+                <input type="hidden" id="employeeId">
+
+                <div class="photo-upload-wrap">
+                    <div class="photo-preview" id="photoPreview">
+                        <span class="photo-placeholder" id="photoPlaceholder">📷</span>
+                        <img id="photoImg" alt="" style="display:none;">
+                    </div>
+                    <div class="photo-actions">
+                        <label for="photoInput" class="photo-upload-btn">
+                            <span>📁</span> <span id="photoBtnText">Upload photo</span>
+                        </label>
+                        <button type="button" class="photo-remove-btn" id="photoRemoveBtn" style="display:none;">Remove</button>
+                        <input type="file" id="photoInput" accept="image/*" hidden>
+                        <p class="photo-hint">JPG, PNG, or WEBP · Max 5MB</p>
+                    </div>
+                </div>
+
+                <div class="form-section-label">Basics</div>
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="fieldName">Full Name <span class="req">*</span></label>
+                        <input type="text" id="fieldName" placeholder="e.g. Sarah Chen" required>
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldNickname">Nickname <span class="opt">(optional)</span></label>
+                        <input type="text" id="fieldNickname" placeholder="e.g. Sunny">
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldTitleSelect">Job Title <span class="req">*</span></label>
+                        <div class="combo-wrap">
+                            <div class="combo-row">
+                                <select id="fieldTitleSelect">
+                                    <option value="">Select a title…</option>
+                                    <option value="__add_new__">➕ Add new title…</option>
+                                </select>
+                                <button type="button" class="combo-remove-btn" id="fieldTitleRemoveBtn" title="Remove this title from the list" aria-label="Remove title" style="display:none;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                            <input type="text" id="fieldTitleNew" class="new-input" placeholder="Type new job title…" style="display:none;">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldDepartmentSelect">Department <span class="req">*</span></label>
+                        <div class="combo-wrap">
+                            <div class="combo-row">
+                                <select id="fieldDepartmentSelect">
+                                    <option value="">Select…</option>
+                                    <option value="__add_new__">➕ Add new department…</option>
+                                </select>
+                                <button type="button" class="combo-remove-btn" id="fieldDepartmentRemoveBtn" title="Remove this department from the list" aria-label="Remove department" style="display:none;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                            <input type="text" id="fieldDepartmentNew" class="new-input" placeholder="Type new department…" style="display:none;">
+                        </div>
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldManagerSelect">Reports to <span class="opt">(optional)</span></label>
+                        <select id="fieldManagerSelect">
+                            <option value="">No manager / top of chart</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldStartDate">Start Date</label>
+                        <input type="date" id="fieldStartDate">
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldProbationEnd">Probation ends on <span class="opt">(optional)</span></label>
+                        <input type="date" id="fieldProbationEnd">
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldTimeOffAllowance">Annual time off allowance (hours) <span class="opt">(default 72h)</span></label>
+                        <input type="number" id="fieldTimeOffAllowance" placeholder="72" step="1" min="0">
+                    </div>
+                </div>
+
+                <div class="form-section-label">About</div>
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="fieldAbout">Tell us about yourself</label>
+                        <textarea id="fieldAbout" class="about-textarea" rows="4" placeholder="A short bio — what you do, what you love, what to know about you…"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section-label">Personal <span class="form-section-note">(private — visible on profile only)</span></div>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="fieldBirthday">Birthday</label>
+                        <input type="date" id="fieldBirthday">
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldPronouns">Pronouns</label>
+                        <input type="text" id="fieldPronouns" placeholder="e.g. She/Her">
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldMarital">Marital Status</label>
+                        <select id="fieldMarital">
+                            <option value="">Prefer not to say</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldGender">Gender</label>
+                        <select id="fieldGender">
+                            <option value="">Prefer not to say</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Non-binary">Non-binary</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldLocation">Location</label>
+                        <input type="text" id="fieldLocation" placeholder="e.g. Nairobi, Kenya">
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldAddress">Address</label>
+                        <input type="text" id="fieldAddress" placeholder="e.g. 42 Riverside Drive, Westlands">
+                    </div>
+                    <div class="form-section-label" style="grid-column: 1 / -1; margin-top: 20px;">Emergency Contact</div>
+                    <div class="form-field">
+                        <label for="fieldEmergencyName">Contact name</label>
+                        <input type="text" id="fieldEmergencyName" placeholder="e.g. Jane Doe">
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldEmergencyRelation">Relationship</label>
+                        <input type="text" id="fieldEmergencyRelation" placeholder="e.g. Spouse">
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldEmergencyPhone">Contact phone</label>
+                        <input type="tel" id="fieldEmergencyPhone" placeholder="e.g. +1 555 987 6543">
+                    </div>
+                    <div class="form-field">
+                        <label for="fieldEmergencyEmail">Contact email <span class="opt">(optional)</span></label>
+                        <input type="email" id="fieldEmergencyEmail" placeholder="e.g. jane@example.com">
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldHobby">Hobby</label>
+                        <input type="text" id="fieldHobby" placeholder="e.g. Long-distance running, jazz piano">
+                    </div>
+                </div>
+
+                <div class="form-section-label">Contact</div>
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="fieldEmail">Email <span class="req">*</span></label>
+                        <input type="email" id="fieldEmail" placeholder="e.g. sarah@company.com" required>
+                    </div>
+                    <div class="form-field full">
+                        <label for="fieldPhone">Phone <span class="opt">(optional)</span></label>
+                        <input type="tel" id="fieldPhone" placeholder="e.g. +1 555 123 4567">
+                    </div>
+                </div>
+
+                <div class="form-error" id="formError" style="display:none;"></div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Save Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="deptModalOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Change Department</h2>
+                <button class="modal-close" id="deptModalClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="dept-modal-sub" id="deptModalSub">Moving 0 employees to:</p>
+                <div class="form-field">
+                    <label for="bulkDeptSelect">New Department</label>
+                    <div class="combo-wrap">
+                        <div class="combo-row">
+                            <select id="bulkDeptSelect">
+                                <option value="">Select…</option>
+                                <option value="__add_new__">➕ Add new department…</option>
+                            </select>
+                            <button type="button" class="combo-remove-btn" id="bulkDeptRemoveBtn" title="Remove this department from the list" aria-label="Remove department" style="display:none;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                        </div>
+                        <input type="text" id="bulkDeptNew" class="new-input" placeholder="Type new department…" style="display:none;">
+                    </div>
+                </div>
+                <div class="form-error" id="deptModalError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="deptCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="deptApplyBtn">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="removeListOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="removeListTitle">Remove from list</h2>
+                <button class="modal-close" id="removeListClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning" style="background: var(--warning-soft); border-color: color-mix(in srgb, var(--warning) 30%, transparent);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="removeListMessage">Choose how to remove this item.</p>
+                </div>
+                <div class="remove-list-options">
+                    <button type="button" class="btn btn-ghost remove-option-btn" id="removeFromListOnlyBtn">
+                        <span class="remove-option-title">Remove from list only</span>
+                        <span class="remove-option-sub">Employees using it keep their value</span>
+                    </button>
+                    <button type="button" class="btn btn-ghost remove-option-btn danger" id="removeAndClearBtn">
+                        <span class="remove-option-title">Remove &amp; clear from employees</span>
+                        <span class="remove-option-sub">Anyone using it will show "Not provided"</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="removeListCancelBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="confirmTitle">Confirm delete</h2>
+                <button class="modal-close" id="confirmClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="confirmMessage">This action cannot be undone.</p>
+                </div>
+                <div class="form-field">
+                    <label for="confirmInput">Type <span class="confirm-phrase" id="confirmPhraseLabel">DELETE</span> to confirm</label>
+                    <input type="text" id="confirmInput" placeholder="" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="confirmCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmApplyBtn" disabled>Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ONBOARDING TEMPLATE EDITOR (#27) ==================== -->
+    <div class="modal-overlay" id="onboardingTemplateEditOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="onboardingTemplateEditTitle">New Template</h2>
+                <button class="modal-close" id="onboardingTemplateEditClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="onboardingTemplateEditId">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="onboardingTemplateFieldName">Template name <span class="req">*</span></label>
+                        <input type="text" id="onboardingTemplateFieldName" placeholder="e.g. Engineer hire">
+                    </div>
+                    <div class="form-field full">
+                        <label>Checklist items</label>
+                        <div class="template-items-list" id="onboardingTemplateItemsList"></div>
+                        <div class="template-item-add-row">
+                            <input type="text" id="onboardingTemplateNewItem" placeholder="Add an item…">
+                            <button type="button" class="btn btn-primary btn-sm" id="onboardingTemplateAddItemBtn">Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-error" id="onboardingTemplateEditError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="onboardingTemplateDeleteBtn" style="margin-right:auto;color:var(--danger);border-color:var(--border-strong);display:none;">Delete template</button>
+                    <button type="button" class="btn btn-ghost" id="onboardingTemplateEditCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="onboardingTemplateEditSaveBtn">Save template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="onboardingTemplateDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete template</h2>
+                <button class="modal-close" id="onboardingTemplateDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="onboardingTemplateDeleteMessage">Delete this template? Existing checklists are not affected.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="onboardingTemplateDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="onboardingTemplateDeleteApplyBtn">Delete template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="announceModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Announcements</h2>
+                    <p class="modal-header-sub" id="announceModalSub">Company feed</p>
+                </div>
+                <div class="announce-modal-actions">
+                    <button class="btn btn-primary btn-sm" id="announceModalAddBtn" type="button">+ Post</button>
+                    <button class="modal-close" id="announceModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="announce-modal-list" id="announceModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="announceEditOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="announceEditTitle">New Announcement</h2>
+                <button class="modal-close" id="announceEditClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="announceEditId">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="announceFieldTitle">Title <span class="req">*</span></label>
+                        <input type="text" id="announceFieldTitle" placeholder="e.g. Office closed Friday">
+                    </div>
+                    <div class="form-field full">
+                        <label for="announceFieldBody">Message <span class="req">*</span></label>
+                        <textarea id="announceFieldBody" rows="5" placeholder="Write your announcement…"></textarea>
+                    </div>
+                    <div class="form-field full">
+                        <label for="announceFieldAuthor">Posted by</label>
+                        <select id="announceFieldAuthor">
+                            <option value="">— Anonymous / HR —</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label class="holiday-checkbox-label">
+                            <input type="checkbox" id="announceFieldPinned">
+                            <span>Pin to top</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-error" id="announceEditError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="announceEditCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="announceEditSaveBtn">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="announceDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete announcement</h2>
+                <button class="modal-close" id="announceDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="announceDeleteMessage">This will remove the announcement.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="announceDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="announceDeleteApplyBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="kudosModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Peer Recognition</h2>
+                    <p class="modal-header-sub" id="kudosModalSub">Kudos wall</p>
+                </div>
+                <div class="kudos-modal-actions">
+                    <button class="btn btn-primary btn-sm" id="kudosModalGiveBtn" type="button">+ Give Kudos</button>
+                    <button class="modal-close" id="kudosModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="kudos-modal-list" id="kudosModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="kudosGiveOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="kudosGiveTitle">Give Kudos</h2>
+                <button class="modal-close" id="kudosGiveClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="kudosFieldFrom">From <span class="req">*</span></label>
+                        <select id="kudosFieldFrom">
+                            <option value="">— Choose colleague —</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="kudosFieldTo">To <span class="req">*</span></label>
+                        <select id="kudosFieldTo">
+                            <option value="">— Choose colleague —</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="kudosFieldMessage">Message <span class="req">*</span></label>
+                        <textarea id="kudosFieldMessage" rows="4" placeholder="e.g. Thanks for jumping in on the release last night!"></textarea>
+                    </div>
+                    <div class="form-field full">
+                        <label for="kudosFieldBadge">Badge <span class="opt">(optional)</span></label>
+                        <select id="kudosFieldBadge">
+                            <option value="">— None —</option>
+                            <option value="star">⭐ Star</option>
+                            <option value="rocket">🚀 Rocket</option>
+                            <option value="heart">💖 Heart</option>
+                            <option value="fire">🔥 Fire</option>
+                            <option value="trophy">🏆 Trophy</option>
+                            <option value="bulb">💡 Bright Idea</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-error" id="kudosGiveError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="kudosGiveCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="kudosGiveSaveBtn">Send Kudos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="kudosDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete kudos</h2>
+                <button class="modal-close" id="kudosDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="kudosDeleteMessage">This will remove the kudos.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="kudosDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="kudosDeleteApplyBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="notesModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2 id="notesModalTitle">Notes &amp; 1-on-1s</h2>
+                    <p class="modal-header-sub" id="notesModalSub">—</p>
+                </div>
+                <div class="notes-modal-actions">
+                    <button class="btn btn-primary btn-sm" id="notesAddBtn" type="button">+ Add Note</button>
+                    <button class="modal-close" id="notesModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="notes-modal-list" id="notesModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="noteEditOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="noteEditTitle">New Note</h2>
+                <button class="modal-close" id="noteEditClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="noteEditId">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="noteFieldType">Type</label>
+                        <select id="noteFieldType">
+                            <option value="note">General Note</option>
+                            <option value="one-on-one">1-on-1</option>
+                            <option value="feedback">Feedback</option>
+                            <option value="warning">Warning / PIP</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="noteFieldDate">Date</label>
+                        <input type="date" id="noteFieldDate">
+                    </div>
+                    <div class="form-field full">
+                        <label for="noteFieldBody">Note <span class="req">*</span></label>
+                        <textarea id="noteFieldBody" rows="6" placeholder="What was discussed / noted…"></textarea>
+                    </div>
+                    <div class="form-field full">
+                        <label class="holiday-checkbox-label">
+                            <input type="checkbox" id="noteFieldPrivate">
+                            <span>Private (HR only)</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-error" id="noteEditError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="noteEditCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="noteEditSaveBtn">Save Note</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="noteDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete note</h2>
+                <button class="modal-close" id="noteDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="noteDeleteMessage">This will remove the note.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="noteDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="noteDeleteApplyBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="jobHistoryEditOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="jobHistoryEditTitle">Add Job History Entry</h2>
+                <button class="modal-close" id="jobHistoryEditClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="jobHistoryEditId">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="jhFieldKind">Change type <span class="req">*</span></label>
+                        <select id="jhFieldKind">
+                            <option value="title">Title change</option>
+                            <option value="pay">Pay change</option>
+                            <option value="department">Department change</option>
+                            <option value="manager">Manager change</option>
+                            <option value="promotion">Promotion</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="jhFieldSummary">Summary <span class="req">*</span></label>
+                        <input type="text" id="jhFieldSummary" placeholder="e.g. Promoted to Senior Engineer">
+                    </div>
+                    <div class="form-field">
+                        <label for="jhFieldFrom">From</label>
+                        <input type="text" id="jhFieldFrom" placeholder="e.g. Engineer II">
+                    </div>
+                    <div class="form-field">
+                        <label for="jhFieldTo">To</label>
+                        <input type="text" id="jhFieldTo" placeholder="e.g. Senior Engineer">
+                    </div>
+                    <div class="form-field full">
+                        <label for="jhFieldDate">Effective date <span class="req">*</span></label>
+                        <input type="date" id="jhFieldDate">
+                    </div>
+                    <div class="form-field full">
+                        <label for="jhFieldNotes">Notes <span class="opt">(optional)</span></label>
+                        <textarea id="jhFieldNotes" rows="3" placeholder="Extra context…"></textarea>
+                    </div>
+                </div>
+                <div class="form-error" id="jobHistoryEditError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="jobHistoryEditCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="jobHistoryEditSaveBtn">Save Entry</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="jobHistoryDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete job history entry</h2>
+                <button class="modal-close" id="jobHistoryDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="jobHistoryDeleteMessage">This will remove the entry.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="jobHistoryDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="jobHistoryDeleteApplyBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="goalsModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Goals &amp; OKRs</h2>
+                    <p class="modal-header-sub" id="goalsModalSub">Team objectives</p>
+                </div>
+                <div class="goals-modal-actions">
+                    <button class="btn btn-primary btn-sm" id="goalsModalAddBtn" type="button">+ Goal</button>
+                    <button class="modal-close" id="goalsModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="goals-modal-list" id="goalsModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="goalEditOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="goalEditTitle">New Goal</h2>
+                <button class="modal-close" id="goalEditClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="goalEditId">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="goalFieldOwner">Owner <span class="req">*</span></label>
+                        <select id="goalFieldOwner">
+                            <option value="">— Choose employee —</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="goalFieldTitle">Goal <span class="req">*</span></label>
+                        <input type="text" id="goalFieldTitle" placeholder="e.g. Ship v2 of mobile app">
+                    </div>
+                    <div class="form-field full">
+                        <label for="goalFieldDescription">Description <span class="opt">(optional)</span></label>
+                        <textarea id="goalFieldDescription" rows="3" placeholder="What success looks like…"></textarea>
+                    </div>
+                    <div class="form-field">
+                        <label for="goalFieldCategory">Category</label>
+                        <select id="goalFieldCategory">
+                            <option value="objective">Objective</option>
+                            <option value="key-result">Key Result</option>
+                            <option value="personal">Personal Growth</option>
+                            <option value="team">Team Goal</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="goalFieldStatus">Status</label>
+                        <select id="goalFieldStatus">
+                            <option value="not-started">Not Started</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="at-risk">At Risk</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="goalFieldProgress">Progress %</label>
+                        <input type="number" id="goalFieldProgress" min="0" max="100" step="5" value="0">
+                    </div>
+                    <div class="form-field">
+                        <label for="goalFieldDue">Target date</label>
+                        <input type="date" id="goalFieldDue">
+                    </div>
+                </div>
+                <div class="form-error" id="goalEditError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="goalEditCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="goalEditSaveBtn">Save Goal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="goalDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete goal</h2>
+                <button class="modal-close" id="goalDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="goalDeleteMessage">This will remove the goal.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="goalDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="goalDeleteApplyBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="documentsModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2 id="documentsModalTitle">Documents</h2>
+                    <p class="modal-header-sub" id="documentsModalSub">—</p>
+                </div>
+                <div class="documents-modal-actions">
+                    <button class="btn btn-primary btn-sm" id="documentsAddBtn" type="button">+ Upload</button>
+                    <button class="modal-close" id="documentsModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="documents-storage-bar" id="documentsStorageBar"></div>
+                <div class="documents-modal-list" id="documentsModalList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="documentUploadOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2 id="documentUploadTitle">Upload Document</h2>
+                <button class="modal-close" id="documentUploadClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="docFieldCategory">Category</label>
+                        <select id="docFieldCategory">
+                            <option value="contract">Contract</option>
+                            <option value="id">ID / Passport</option>
+                            <option value="certificate">Certificate</option>
+                            <option value="performance">Performance</option>
+                            <option value="medical">Medical</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="docFieldLabel">Label <span class="opt">(optional)</span></label>
+                        <input type="text" id="docFieldLabel" placeholder="e.g. Signed offer letter 2025">
+                    </div>
+                    <div class="form-field full">
+                        <label>File <span class="req">*</span></label>
+                        <div class="doc-upload-drop" id="docUploadDrop">
+                            <input type="file" id="docFieldFile" hidden>
+                            <div class="doc-upload-inner" id="docUploadInner">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <div class="doc-upload-text">
+                                    <strong>Choose a file</strong>
+                                    <span>PDF, DOC, image · max 500 KB</span>
+                                </div>
+                            </div>
+                            <div class="doc-upload-file" id="docUploadFile" style="display:none;">
+                                <span class="doc-upload-filename" id="docUploadFilename"></span>
+                                <button type="button" class="doc-upload-clear" id="docUploadClear" aria-label="Remove file">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-error" id="documentUploadError" style="display:none;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="documentUploadCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="documentUploadSaveBtn">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="documentDeleteOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete document</h2>
+                <button class="modal-close" id="documentDeleteClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="documentDeleteMessage">This will permanently remove the file.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="documentDeleteCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="documentDeleteApplyBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ACTIVITY LOG MODAL (#25) ==================== -->
+    <div class="modal-overlay" id="activityModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Activity</h2>
+                    <p class="modal-header-sub" id="activityModalSub">Recent changes to your team</p>
+                </div>
+                <div class="activity-modal-actions">
+                    <button class="btn btn-ghost btn-sm" id="activityExportBtn" type="button" title="Download as JSON">Export</button>
+                    <button class="btn btn-ghost btn-sm" id="activityClearBtn" type="button" title="Clear all activity">Clear</button>
+                    <button class="modal-close" id="activityModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="activity-tabs" id="activityTabs">
+                    <button class="activity-tab active" data-cat="all" type="button">All</button>
+                    <button class="activity-tab" data-cat="employee" type="button">Employees</button>
+                    <button class="activity-tab" data-cat="timeoff" type="button">Time Off</button>
+                    <button class="activity-tab" data-cat="pay" type="button">Pay</button>
+                    <button class="activity-tab" data-cat="onboarding" type="button">Onboarding</button>
+                    <button class="activity-tab" data-cat="documents" type="button">Documents</button>
+                </div>
+                <div class="activity-search-wrap">
+                    <svg class="activity-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="activitySearchInput" placeholder="Search by name or action…" autocomplete="off">
+                </div>
+                <div class="activity-list" id="activityList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="activityClearOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Clear activity log</h2>
+                <button class="modal-close" id="activityClearClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p>This will permanently delete all activity history. Employee data and other records are unaffected. This cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="activityClearCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="activityClearApplyBtn">Clear log</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TRASH / RECYCLE BIN (#25b) ==================== -->
+    <div class="modal-overlay" id="trashModalOverlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <div>
+                    <h2>Trash</h2>
+                    <p class="modal-header-sub" id="trashModalSub">Deleted items — restore within 30 days</p>
+                </div>
+                <div class="trash-modal-actions">
+                    <button class="btn btn-ghost btn-sm" id="trashEmptyBtn" type="button" title="Permanently delete everything in trash">Empty Trash</button>
+                    <button class="modal-close" id="trashModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+                <div class="trash-list" id="trashList"></div>
+                <div class="trash-empty" id="trashEmpty" style="display:none;">
+                    <div class="trash-empty-icon">🗑️</div>
+                    <div class="trash-empty-title">Trash is empty</div>
+                    <div class="trash-empty-sub">Deleted items will appear here for 30 days before being purged automatically.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="trashPurgeOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Delete forever</h2>
+                <button class="modal-close" id="trashPurgeClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="trashPurgeMessage">This item will be permanently removed. This cannot be undone.</p>
+                </div>
+                <div class="form-field">
+                    <label for="trashPurgeConfirm">Type <span class="confirm-phrase">DELETE</span> to confirm</label>
+                    <input type="text" id="trashPurgeConfirm" autocomplete="off" spellcheck="false" placeholder="DELETE">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="trashPurgeCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="trashPurgeApplyBtn" disabled>Delete Forever</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="trashEmptyOverlay">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Empty trash</h2>
+                <button class="modal-close" id="trashEmptyClose" aria-label="Close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <p id="trashEmptyMessage">Everything in the trash will be permanently deleted. This cannot be undone.</p>
+                </div>
+                <div class="form-field">
+                    <label for="trashEmptyConfirm">Type <span class="confirm-phrase">EMPTY</span> to confirm</label>
+                    <input type="text" id="trashEmptyConfirm" autocomplete="off" spellcheck="false" placeholder="EMPTY">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" id="trashEmptyCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="trashEmptyApplyBtn" disabled>Empty Trash</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== REPORTS & DASHBOARD (#20) ==================== -->
+    <div class="modal-overlay" id="reportsModalOverlay">
+        <div class="modal modal-xl">
+            <div class="modal-header">
+                <div>
+                    <h2>Reports &amp; Dashboard</h2>
+                    <p class="modal-header-sub" id="reportsModalSub">At-a-glance view of your team</p>
+                </div>
+                <div class="reports-modal-actions">
+                    <button class="btn btn-ghost btn-sm" id="reportsExportJsonBtn" type="button" title="Download all stats as JSON">⬇ Export JSON</button>
+                    <button class="btn btn-ghost btn-sm" id="reportsExportCsvBtn" type="button" title="Download a flat CSV of key metrics">⬇ Export CSV</button>
+                    <button class="modal-close" id="reportsModalClose" aria-label="Close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-body-scroll">
+
+                <!-- Stat tiles -->
+                <div class="rep-stat-row" id="reportsStatRow">
+                    <div class="rep-stat-tile">
+                        <span class="rep-stat-value" id="repStatHeadcount">0</span>
+                        <span class="rep-stat-label">Headcount</span>
+                        <span class="rep-stat-sub" id="repStatHeadcountSub">—</span>
+                    </div>
+                    <div class="rep-stat-tile">
+                        <span class="rep-stat-value" id="repStatActive">0</span>
+                        <span class="rep-stat-label">Active now</span>
+                        <span class="rep-stat-sub" id="repStatActiveSub">—</span>
+                    </div>
+                    <div class="rep-stat-tile">
+                        <span class="rep-stat-value" id="repStatDepts">0</span>
+                        <span class="rep-stat-label">Departments</span>
+                        <span class="rep-stat-sub" id="repStatDeptsSub">—</span>
+                    </div>
+                    <div class="rep-stat-tile">
+                        <span class="rep-stat-value" id="repStatTenure">0</span>
+                        <span class="rep-stat-label">Avg tenure</span>
+                        <span class="rep-stat-sub" id="repStatTenureSub">—</span>
+                    </div>
+                </div>
+
+                <!-- Row: Dept + Hiring -->
+                <div class="rep-grid-two">
+                    <div class="rep-card">
+                        <div class="rep-card-header">
+                            <h3 class="rep-card-title">Headcount by department</h3>
+                            <span class="rep-card-sub" id="repDeptSub">All time</span>
+                        </div>
+                        <div class="rep-chart-svg" id="repDeptChart"></div>
+                        <div class="rep-chart-empty" id="repDeptEmpty" style="display:none;">No departments yet.</div>
+                    </div>
+                    <div class="rep-card">
+                        <div class="rep-card-header">
+                            <h3 class="rep-card-title">Hiring — last 12 months</h3>
+                            <span class="rep-card-sub" id="repHiringSub">By created date</span>
+                        </div>
+                        <div class="rep-chart-svg" id="repHiringChart"></div>
+                        <div class="rep-chart-empty" id="repHiringEmpty" style="display:none;">No hires recorded yet.</div>
+                    </div>
+                </div>
+
+                <!-- Row: Status + Time off -->
+                <div class="rep-grid-two">
+                    <div class="rep-card">
+                        <div class="rep-card-header">
+                            <h3 class="rep-card-title">Status distribution</h3>
+                            <span class="rep-card-sub" id="repStatusSub">Right now</span>
+                        </div>
+                        <div class="rep-chart-svg" id="repStatusChart"></div>
+                        <div class="rep-chart-empty" id="repStatusEmpty" style="display:none;">No employees yet.</div>
+                    </div>
+                    <div class="rep-card">
+                        <div class="rep-card-header">
+                            <h3 class="rep-card-title">Top time off usage</h3>
+                            <span class="rep-card-sub" id="repTimeOffSub">This year · hours used</span>
+                        </div>
+                        <div class="rep-chart-svg" id="repTimeOffChart"></div>
+                        <div class="rep-chart-empty" id="repTimeOffEmpty" style="display:none;">No time off taken yet.</div>
+                    </div>
+                </div>
+
+                <!-- Row: Payroll -->
+                <div class="rep-card rep-card-wide">
+                    <div class="rep-card-header">
+                        <h3 class="rep-card-title">Payroll summary — current period</h3>
+                        <span class="rep-card-sub" id="repPayrollSub">—</span>
+                    </div>
+                    <div class="rep-chart-svg" id="repPayrollChart"></div>
+                    <div class="rep-chart-empty" id="repPayrollEmpty" style="display:none;">No pay settings configured.</div>
+                </div>
+
+                <!-- Row: Activity heatmap -->
+                <div class="rep-card rep-card-wide">
+                    <div class="rep-card-header">
+                        <h3 class="rep-card-title">Activity — last 90 days</h3>
+                        <span class="rep-card-sub" id="repHeatmapSub">Changes logged per day</span>
+                    </div>
+                    <div class="rep-chart-svg rep-heatmap-svg" id="repHeatmap"></div>
+                    <div class="rep-chart-empty" id="repHeatmapEmpty" style="display:none;">No activity logged yet.</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="cmdk-overlay" id="cmdkOverlay">
+        <div class="cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
+            <div class="cmdk-input-row">
+                <svg class="cmdk-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="cmdkInput" class="cmdk-input" placeholder="Search employees, actions, sections…" autocomplete="off" spellcheck="false">
+                <span class="cmdk-esc-hint">Esc</span>
+            </div>
+            <div class="cmdk-results" id="cmdkResults"></div>
+            <div class="cmdk-footer">
+                <span class="cmdk-footer-item"><span class="cmdk-kbd-sm">↑↓</span> navigate</span>
+                <span class="cmdk-footer-item"><span class="cmdk-kbd-sm">↵</span> select</span>
+                <span class="cmdk-footer-item"><span class="cmdk-kbd-sm">Esc</span> close</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-popover" id="statusPopover" style="display:none;" role="menu" aria-label="Change status">
+        <div class="status-popover-inner" id="statusPopoverInner"></div>
+        <div class="status-popover-caret" id="statusPopoverCaret"></div>
+    </div>
+
+    <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ==================== PWA BOOT (#23) ==================== -->
+    <script>
+    (function () {
+        if ('serviceWorker' in navigator &&
+            (location.protocol === 'http:' || location.protocol === 'https:')) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('sw.js').catch(function (err) {
+                    console.warn('[HRmode] Service worker registration skipped:', err && err.message);
+                });
+            });
+        }
+
+        var deferredInstallPrompt = null;
+        var installBtn = document.getElementById('installAppBtn');
+        var installBtnDismissed = false;
+
+        try {
+            installBtnDismissed = localStorage.getItem('hrmode-install-dismissed') === '1';
+        } catch (e) {}
+
+        window.addEventListener('beforeinstallprompt', function (e) {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            if (installBtn && !installBtnDismissed) {
+                installBtn.style.display = 'inline-flex';
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', function () {
+                if (!deferredInstallPrompt) {
+                    installBtn.style.display = 'none';
+                    return;
+                }
+                deferredInstallPrompt.prompt();
+                deferredInstallPrompt.userChoice.then(function (choice) {
+                    if (choice && choice.outcome === 'accepted') {
+                        installBtn.style.display = 'none';
+                    } else {
+                        try { localStorage.setItem('hrmode-install-dismissed', '1'); } catch (e) {}
+                        installBtn.style.display = 'none';
+                    }
+                    deferredInstallPrompt = null;
+                });
+            });
+        }
+
+        window.addEventListener('appinstalled', function () {
+            if (installBtn) installBtn.style.display = 'none';
+            deferredInstallPrompt = null;
+        });
+
+        var offlineBar = document.getElementById('pwaOfflineBar');
+        function updateOfflineBar() {
+            if (!offlineBar) return;
+            offlineBar.style.display = navigator.onLine ? 'none' : 'flex';
+        }
+        window.addEventListener('online', updateOfflineBar);
+        window.addEventListener('offline', updateOfflineBar);
+        updateOfflineBar();
+    })();
+    </script>
+
+    <script src="app.js"></script>
+</body>
+</html>
